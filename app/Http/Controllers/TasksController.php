@@ -16,7 +16,7 @@ class TasksController extends Controller
      // getでmessages/にアクセスされた場合の「一覧表示処理」
     public function index()
     {
-        //メッセージ一覧を取得
+        //タスク一覧を取得
         $tasks = Task::all();
         
         return view('tasks.index', [
@@ -29,7 +29,7 @@ class TasksController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-     // getでmessages/createにアクセスされた場合の「新規登録画面表示処理」
+     // getでtasks/createにアクセスされた場合の「新規登録画面表示処理」
     public function create()
     {
         //
@@ -46,10 +46,16 @@ class TasksController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-     // postでmessages/にアクセスされた場合の「新規登録処理」
+     // postでtasks/にアクセスされた場合の「新規登録処理」
     public function store(Request $request)
     {
-        // メッセージを作成
+        // バリデーション
+        $request->validate([
+            'status' => 'required|max:10',
+            'content' => 'required',
+        ]);
+        
+        // タスクを作成
         $task = new Task;
         $task->status = $request->status;
         $task->content = $request->content;
@@ -65,13 +71,13 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-     // getでmessages/（任意のid）にアクセスされた場合の「取得表示処理」
+     // getでtasks/（任意のid）にアクセスされた場合の「取得表示処理」
     public function show($id)
     {
-        // idの値でメッセージを検索して取得
+        // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
 
-        // メッセージ詳細ビューでそれを表示
+        // タスク詳細ビューでそれを表示
         return view('tasks.show', [
             'task' => $task,
         ]);
@@ -83,13 +89,13 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-     // getでmessages/（任意のid）/editにアクセスされた場合の「更新画面表示処理」
+     // getでtasks/（任意のid）/editにアクセスされた場合の「更新画面表示処理」
     public function edit($id)
     {
-        // idの値でメッセージを検索して取得
+        // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
 
-        // メッセージ編集ビューでそれを表示
+        // タスク編集ビューでそれを表示
         return view('tasks.edit', [
             'task' => $task,
         ]);
@@ -102,9 +108,15 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-     // putまたはpatchでmessages/（任意のid）にアクセスされた場合の「更新処理」
+     // putまたはpatchでtasks/（任意のid）にアクセスされた場合の「更新処理」
     public function update(Request $request, $id)
     {
+        // バリデーション
+        $request->validate([
+            'status' => 'required|max:10',
+            'content' => 'required',
+        ]);
+        
         // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
         // メッセージを更新
@@ -122,12 +134,12 @@ class TasksController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-     // deleteでmessages/（任意のid）にアクセスされた場合の「削除処理」
+     // deleteでtasks/（任意のid）にアクセスされた場合の「削除処理」
     public function destroy($id)
     {
-        // idの値でメッセージを検索して取得
+        // idの値でタスクを検索して取得
         $task = Task::findOrFail($id);
-        // メッセージを削除
+        // タスクを削除
         $task->delete();
 
         // トップページへリダイレクトさせる
