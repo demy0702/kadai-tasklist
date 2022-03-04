@@ -13,9 +13,23 @@ class TasksController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-     // getでmessages/にアクセスされた場合の「一覧表示処理」
+     // getでtasks/にアクセスされた場合の「一覧表示処理」
     public function index()
     {
+        if (\Auth::check()) { // 認証済の場合
+        
+            $user = \Auth::user();
+            //タスク一覧を取得
+            $tasks = $user->tasks()->orderBy('created_at', 'desc')->paginate(10);
+            
+            return view('tasks.index', [
+            'tasks' => $tasks,
+            ]);
+            
+        } else { // 未認証の場合
+            return view('welcome');
+        }
+        
         //タスク一覧を取得
         $tasks = Task::all();
         
@@ -55,11 +69,18 @@ class TasksController extends Controller
             'content' => 'required',
         ]);
         
+        $request->user()->tasks()->create([
+            'status' => $request->status,
+            'content' => $request->content,
+            ]);
+        
         // タスクを作成
-        $task = new Task;
-        $task->status = $request->status;
-        $task->content = $request->content;
-        $task->save();
+        //$task = new Task;
+        //$task->user_id = $request->user_id;
+        //$task->status = $request->status;
+        //$task->content = $request->content;
+        //$task->save();
+        
 
         // トップページへリダイレクトさせる
         return redirect('/');
@@ -120,6 +141,7 @@ class TasksController extends Controller
         // idの値でメッセージを検索して取得
         $task = Task::findOrFail($id);
         // メッセージを更新
+        
         $task->status = $request->status;
         $task->content = $request->content;
         $task->save();
