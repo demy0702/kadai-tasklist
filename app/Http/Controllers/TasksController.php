@@ -104,6 +104,9 @@ class TasksController extends Controller
             return view('tasks.show', [
                 'task' => $task,
             ]);
+            
+        } else {
+            return redirect('/');
         }
         
     }
@@ -126,6 +129,8 @@ class TasksController extends Controller
             return view('tasks.edit', [
                 'task' => $task,
             ]);
+        } else {
+            return redirect('/');
         }
     }
 
@@ -172,9 +177,12 @@ class TasksController extends Controller
         if (\Auth::id() === $task->user_id) {
             // タスクを削除
             $task->delete();
+            
+        } else {
+            // トップページへリダイレクトさせる
+            return redirect('/');
         }
 
-        // トップページへリダイレクトさせる
-        return redirect('/');
+        
     }
 }
