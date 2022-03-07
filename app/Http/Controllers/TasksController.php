@@ -154,12 +154,16 @@ class TasksController extends Controller
         $task = Task::findOrFail($id);
         // メッセージを更新
         
-        $task->status = $request->status;
-        $task->content = $request->content;
-        $task->save();
-
-        // トップページへリダイレクトさせる
-        return redirect('/');
+        if (\Auth::id() === $task->user_id) {
+            $task->status = $request->status;
+            $task->content = $request->content;
+            $task->save();
+            return redirect('/');
+            
+        } else {
+            // トップページへリダイレクトさせる
+            return redirect('/');
+        }
     }
 
     /**
